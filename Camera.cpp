@@ -33,10 +33,10 @@ void Perspective()
     line(frame,Source[3], Source[2], Scalar(0,0,255), 2);
     line(frame,Source[0], Source[1], Scalar(0,0,255), 2); 
 
-    line(frame,Destination[0], Destination[1], Scalar(0,0,255), 2);
-    line(frame,Destination[1], Destination[3], Scalar(0,0,255), 2);
-    line(frame,Destination[3], Destination[2], Scalar(0,0,255), 2);
-    line(frame,Destination[0], Destination[1], Scalar(0,0,255), 2); 
+    //line(frame,Destination[0], Destination[1], Scalar(0,0,255), 2);
+    //line(frame,Destination[1], Destination[3], Scalar(0,0,255), 2);
+    //line(frame,Destination[3], Destination[2], Scalar(0,0,255), 2);
+    //line(frame,Destination[0], Destination[1], Scalar(0,0,255), 2); 
 
     Matrix = getPerspectiveTransform(Source, Destination);
     warpPerspective(frame, framePers, Matrix, Size(350,240));
