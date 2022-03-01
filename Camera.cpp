@@ -82,18 +82,18 @@ int main(int argc,char **argv)
     Threshold();
     
     namedWindow("ORIGINAL",WINDOW_KEEPRATIO);
-    moveWindow("ORIGINAL",50,100);
-    resizeWindow("ORIGINAL",480,640);
+    moveWindow("ORIGINAL",0,100);
+    resizeWindow("ORIGINAL",480,480);
     imshow("ORIGINAL", frame);
     
     namedWindow("Perspective",WINDOW_KEEPRATIO);
-    moveWindow("Perspective",700,100);
-    resizeWindow("Perspective",480,640);
+    moveWindow("Perspective",640,100);
+    resizeWindow("Perspective",640,480);
     imshow("Perspective", framePers);
     
     namedWindow("GRAY",WINDOW_KEEPRATIO);
     moveWindow("GRAY",300,100);
-    resizeWindow("GRAY",480,640);
+    resizeWindow("GRAY",640,480);
     imshow("GRAY", frameGray);
     
     waitKey(1);
