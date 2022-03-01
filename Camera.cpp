@@ -11,7 +11,7 @@ using namespace raspicam;
 Mat frame,Matrix,framePers,frameGray;
 RaspiCam_Cv Camera;
 
-Point2f Source[] = {Point2f(35,140), Point2f(295,130), Point2f(0,180), Point2f(340,180)};
+Point2f Source[] = {Point2f(35,135), Point2f(295,130), Point2f(0,180), Point2f(340,180)};
 Point2f Destination[] = {Point2f(80,0), Point2f(280,0), Point2f(80,240), Point2f(280,240)};
 
 
@@ -52,6 +52,9 @@ void capture()
 void Threshold()
 {
     cvtColor(framePers, frameGray, COLOR_RGB2GRAY);
+    inRange(frameGray,110,250,frameGray);
+
+
 
 }
 
