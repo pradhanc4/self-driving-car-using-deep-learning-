@@ -9,7 +9,13 @@ using namespace cv;
 using namespace raspicam;
 
 Mat frame,Matrix,framePers,frameGray, frameThresh, frameEdge ,frameFinal;
+Mat ROILane;
+int LeftLanePos,RightLanePos;
+
+
 RaspiCam_Cv Camera;
+
+vector<int> histrogramLane;
 
 Point2f Source[] = {Point2f(35,135), Point2f(295,130), Point2f(0,180), Point2f(340,180)};
 Point2f Destination[] = {Point2f(80,0), Point2f(280,0), Point2f(80,240), Point2f(280,240)};
@@ -59,6 +65,42 @@ void Threshold()
 
 }
 
+void Histrogram()
+{
+    histrogramLane.resize(400);
+    histrogramLane.clear();
+    
+    //for(int i=0i<frame.size().width;i++)
+    for(int i=0; i<400; i++)
+    {
+            ROILane = frameFinal(Rect(i,140,1,240));
+            divide(255,ROILane, ROILane);
+            histrogramLane.push_back((int)(sum(ROILane)[0]));
+    }
+}
+
+void LaneFinder()
+{
+    vector<int>::iterator LeftPtr;
+    LeftPtr = max_element(histrogramLane.begin(),histrogramLane.begin() + 150);
+    LeftLanePos=distance(histrogramLane.begin(), LeftPtr);
+    
+    vector<int>::iterator RightPtr;
+    RightPtr = max_element(histrogramLane.begin() +250,histrogramLane.begin() + 150);
+    RightLanePos=distance(histrogramLane.begin(), RightPtr);
+    
+    line(frameFinal, Point2f(LeftLanePos, 0), Point2f(LeftLanePos,240), Scalar(0,255,0,2));
+    line(frameFinal, Point2f(RightLanePos, 0), Point2f(RightLanePos,240), Scalar(0,255,0,2));
+    
+    
+    
+    
+    
+}
+    
+    
+    
+
 
 int main(int argc,char **argv)
 {
@@ -84,6 +126,9 @@ int main(int argc,char **argv)
     capture();
     Perspective();
     Threshold();
+    Histrogram();
+    LaneFinder();
+    
     
     namedWindow("ORIGINAL",WINDOW_KEEPRATIO);
     moveWindow("ORIGINAL",0,100);
