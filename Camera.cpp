@@ -8,7 +8,7 @@ using namespace std;
 using namespace cv;
 using namespace raspicam;
 
-Mat frame,Matrix,framePers,frameGray, frameThresh, frameEdge;
+Mat frame,Matrix,framePers,frameGray, frameThresh, frameEdge ,frameFinal;
 RaspiCam_Cv Camera;
 
 Point2f Source[] = {Point2f(35,135), Point2f(295,130), Point2f(0,180), Point2f(340,180)};
@@ -54,7 +54,8 @@ void Threshold()
     cvtColor(framePers, frameGray, COLOR_RGB2GRAY);
     inRange(frameGray,110,250,frameThresh);
     Canny(frameGray, frameEdge, 100,350,3,false);
-
+    add(frameThresh, frameEdge, frameFinal);
+    cvtColor(frameFinal, frameFinal, COLOR_GRAY2RGB);
 
 }
 
@@ -97,7 +98,7 @@ int main(int argc,char **argv)
     namedWindow("GRAY",WINDOW_KEEPRATIO);
     moveWindow("GRAY",300,100);
     resizeWindow("GRAY",640,480);
-    imshow("GRAY", frameEdge);
+    imshow("GRAY", frameFinal);
     
     waitKey(1);
     
