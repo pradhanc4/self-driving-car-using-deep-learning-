@@ -1,10 +1,13 @@
+// project : Self driving car using deep learning 
+// this is the code of camera module 
+
+
 #include <opencv2/opencv.hpp>
 #include <raspicam_cv.h>
 #include <iostream>
 #include <chrono>
 #include <ctime>
 
-// This is  demonstration
 
 using namespace std;
 using namespace cv;
