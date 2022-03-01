@@ -95,10 +95,10 @@ int main(int argc,char **argv)
     resizeWindow("Perspective",640,480);
     imshow("Perspective", framePers);
     
-    namedWindow("GRAY",WINDOW_KEEPRATIO);
-    moveWindow("GRAY",300,100);
-    resizeWindow("GRAY",640,480);
-    imshow("GRAY", frameFinal);
+    namedWindow("FINAL",WINDOW_KEEPRATIO);
+    moveWindow("FINAL",300,100);
+    resizeWindow("FINAL",640,480);
+    imshow("FINAL", frameFinal);
     
     waitKey(1);
     
