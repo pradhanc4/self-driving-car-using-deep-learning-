@@ -1,21 +1,18 @@
-// project : Self driving car using deep learning 
-// this is the code of camera module 
-
-
 #include <opencv2/opencv.hpp>
 #include <raspicam_cv.h>
 #include <iostream>
 #include <chrono>
 #include <ctime>
 
-
 using namespace std;
 using namespace cv;
 using namespace raspicam;
 
-Mat frame;
+Mat frame,Matrix,framePers;
 RaspiCam_Cv Camera;
+
 Point2f Source[] = {Point2f(35,140), Point2f(295,130), Point2f(0,180), Point2f(340,180)};
+Point2f Destination[] = {Point2f(60,0), Point2f(300,0), Point2f(60,240), Point2f(300,240)};
 
 
  void Setup ( int argc,char **argv, RaspiCam_Cv &Camera )
@@ -35,6 +32,18 @@ void Perspective()
     line(frame,Source[1], Source[3], Scalar(0,0,255), 2);
     line(frame,Source[3], Source[2], Scalar(0,0,255), 2);
     line(frame,Source[0], Source[1], Scalar(0,0,255), 2); 
+
+    line(frame,Destination[0], Destination[1], Scalar(0,0,255), 2);
+    line(frame,Destination[1], Destination[3], Scalar(0,0,255), 2);
+    line(frame,Destination[3], Destination[2], Scalar(0,0,255), 2);
+    line(frame,Destination[0], Destination[1], Scalar(0,0,255), 2); 
+
+    Matrix = getPerspectiveTransform(Source, Destination);
+    warpPerspective(frame, framePers, Matrix, Size(350,240));
+
+
+
+
 }
 void capture()
 {
@@ -73,10 +82,10 @@ int main(int argc,char **argv)
     resizeWindow("ORIGINAL",640, 480);
     imshow("ORIGINAL", frame);
     
-    //namedWindow("RGB",WINDOW_KEEPRATIO);
-    //moveWindow("RGB",700,100);
-    //resizeWindow("RGB",640, 480);
-    //imshow("RGB", frame1);
+    namedWindow("Perspective",WINDOW_KEEPRATIO);
+    moveWindow("Perspective",700,100);
+    resizeWindow("Perspective",640, 480);
+    imshow("Perspective", framePers);
     
     waitKey(1);
     
