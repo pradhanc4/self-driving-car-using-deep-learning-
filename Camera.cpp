@@ -8,11 +8,11 @@ using namespace std;
 using namespace cv;
 using namespace raspicam;
 
-Mat frame,Matrix,framePers;
+Mat frame,Matrix,framePers,frameGray;
 RaspiCam_Cv Camera;
 
 Point2f Source[] = {Point2f(35,140), Point2f(295,130), Point2f(0,180), Point2f(340,180)};
-Point2f Destination[] = {Point2f(60,0), Point2f(300,0), Point2f(60,240), Point2f(300,240)};
+Point2f Destination[] = {Point2f(80,0), Point2f(280,0), Point2f(80,240), Point2f(280,240)};
 
 
  void Setup ( int argc,char **argv, RaspiCam_Cv &Camera )
@@ -33,10 +33,7 @@ void Perspective()
     line(frame,Source[3], Source[2], Scalar(0,0,255), 2);
     line(frame,Source[0], Source[1], Scalar(0,0,255), 2); 
 
-    //line(frame,Destination[0], Destination[1], Scalar(0,0,255), 2);
-    //line(frame,Destination[1], Destination[3], Scalar(0,0,255), 2);
-    //line(frame,Destination[3], Destination[2], Scalar(0,0,255), 2);
-    //line(frame,Destination[0], Destination[1], Scalar(0,0,255), 2); 
+    
 
     Matrix = getPerspectiveTransform(Source, Destination);
     warpPerspective(frame, framePers, Matrix, Size(350,240));
@@ -50,6 +47,12 @@ void capture()
     Camera.grab();
     Camera.retrieve( frame);
     cvtColor(frame, frame, COLOR_BGR2RGB);
+}
+
+void Threshold()
+{
+    cvtColor(framePers, frameGray, COLOR_RGB2GRAY);
+
 }
 
 
@@ -76,16 +79,22 @@ int main(int argc,char **argv)
     
     capture();
     Perspective();
+    Threshold();
     
     namedWindow("ORIGINAL",WINDOW_KEEPRATIO);
     moveWindow("ORIGINAL",50,100);
-    resizeWindow("ORIGINAL",640, 480);
+    resizeWindow("ORIGINAL",480,640);
     imshow("ORIGINAL", frame);
     
     namedWindow("Perspective",WINDOW_KEEPRATIO);
     moveWindow("Perspective",700,100);
-    resizeWindow("Perspective",640, 480);
+    resizeWindow("Perspective",480,640);
     imshow("Perspective", framePers);
+    
+    namedWindow("GRAY",WINDOW_KEEPRATIO);
+    moveWindow("GRAY",300,100);
+    resizeWindow("GRAY",480,640);
+    imshow("GRAY", frameGray);
     
     waitKey(1);
     
