@@ -10,12 +10,16 @@ using namespace raspicam;
 
 Mat frame,Matrix,framePers,frameGray, frameThresh, frameEdge ,frameFinal,laneCenter;
 Mat ROILane;
-int LeftLanePos,RightLanePos;
+int LeftLanePos,RightLanePos,Result,frameCenter,laneCenter;
 
 
 RaspiCam_Cv Camera;
 
+stringstream ss;
+
+
 vector<int> histrogramLane;
+vector<int> histrogramReverse;
 
 Point2f Source[] = {Point2f(35,135), Point2f(295,130), Point2f(0,180), Point2f(340,180)};
 Point2f Destination[] = {Point2f(80,0), Point2f(280,0), Point2f(80,240), Point2f(280,240)};
@@ -142,9 +146,14 @@ int main(int argc,char **argv)
     Perspective();
     Threshold();
     Histrogram();
-    LaneFinder();
+    //LaneFinder();
+
+ss.str("");
+ss.clear();
+ss<<"Result="<<Result;
+putText(frame, ss.str(), Point2f(1,50), 0,1, Scalar(0,255,0),2);
     
-    
+    Camera.cpp
     namedWindow("ORIGINAL",WINDOW_KEEPRATIO);
     moveWindow("ORIGINAL",0,100);
     resizeWindow("ORIGINAL",480,480);
