@@ -15,7 +15,7 @@ int LeftLanePos,RightLanePos;
 
 RaspiCam_Cv Camera;
 
-vector<int> histrogramLane;
+//vector<int> histrogramLane;
 
 Point2f Source[] = {Point2f(35,135), Point2f(295,130), Point2f(0,180), Point2f(340,180)};
 Point2f Destination[] = {Point2f(80,0), Point2f(280,0), Point2f(80,240), Point2f(280,240)};
@@ -37,7 +37,7 @@ void Perspective()
     line(frame,Source[0], Source[1], Scalar(0,0,255), 2);
     line(frame,Source[1], Source[3], Scalar(0,0,255), 2);
     line(frame,Source[3], Source[2], Scalar(0,0,255), 2);
-    line(frame,Source[0], Source[1], Scalar(0,0,255), 2); 
+    line(frame,Source[2], Source[1], Scalar(0,0,255), 2); 
 
     
 
@@ -64,7 +64,7 @@ void Threshold()
     cvtColor(frameFinal, frameFinal, COLOR_GRAY2RGB);
 
 }
-
+/*
 void Histrogram()
 {
     histrogramLane.resize(400);
@@ -73,7 +73,7 @@ void Histrogram()
     //for(int i=0i<frame.size().width;i++)
     for(int i=0; i<400; i++)
     {
-            ROILane = frameFinal(Rect(i,140,1,240));
+            ROILane = frameFinal(Rect(i,140,1,100));
             divide(255,ROILane, ROILane);
             histrogramLane.push_back((int)(sum(ROILane)[0]));
     }
@@ -101,7 +101,7 @@ void LaneFinder()
     
     
 
-
+*/
 int main(int argc,char **argv)
 {
 	
