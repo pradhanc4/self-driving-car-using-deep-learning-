@@ -8,14 +8,14 @@ using namespace std;
 using namespace cv;
 using namespace raspicam;
 
-Mat frame,Matrix,framePers,frameGray, frameThresh, frameEdge ,frameFinal;
+Mat frame,Matrix,framePers,frameGray, frameThresh, frameEdge ,frameFinal,laneCenter;
 Mat ROILane;
 int LeftLanePos,RightLanePos;
 
 
 RaspiCam_Cv Camera;
 
-//vector<int> histrogramLane;
+vector<int> histrogramLane;
 
 Point2f Source[] = {Point2f(35,135), Point2f(295,130), Point2f(0,180), Point2f(340,180)};
 Point2f Destination[] = {Point2f(80,0), Point2f(280,0), Point2f(80,240), Point2f(280,240)};
@@ -37,7 +37,7 @@ void Perspective()
     line(frame,Source[0], Source[1], Scalar(0,0,255), 2);
     line(frame,Source[1], Source[3], Scalar(0,0,255), 2);
     line(frame,Source[3], Source[2], Scalar(0,0,255), 2);
-    line(frame,Source[2], Source[1], Scalar(0,0,255), 2); 
+    line(frame,Source[2], Source[0], Scalar(0,0,255), 2); 
 
     
 
@@ -64,7 +64,7 @@ void Threshold()
     cvtColor(frameFinal, frameFinal, COLOR_GRAY2RGB);
 
 }
-/*
+
 void Histrogram()
 {
     histrogramLane.resize(400);
@@ -73,7 +73,7 @@ void Histrogram()
     //for(int i=0i<frame.size().width;i++)
     for(int i=0; i<400; i++)
     {
-            ROILane = frameFinal(Rect(i,140,1,100));
+            ROILane = frameFinal(Rect(i,140,1,240));
             divide(255,ROILane, ROILane);
             histrogramLane.push_back((int)(sum(ROILane)[0]));
     }
@@ -81,18 +81,33 @@ void Histrogram()
 
 void LaneFinder()
 {
-    vector<int>::iterator LeftPtr;
-    LeftPtr = max_element(histrogramLane.begin(),histrogramLane.begin() + 150);
-    LeftLanePos=distance(histrogramLane.begin(), LeftPtr);
+                    vector<int>:: iterator LeftPtr;
+                    LeftPtr = max_element(histrogramLane.begin(), histrogramLane.begin()+190);
+                    LeftLanePos = distance(histrogramLane.begin(), LeftPtr); 
+                    
+                    vector<int>:: iterator RightPtr;
+                    
+                    histrogramReverse.resize(400);
+                    
+                    histrogramReverse.assign(histrogramLane.begin(), histrogramLane.end());
+                    reverse(histrogramReverse.begin(), histrogramReverse.end()); 
+                    
+                    
+                    RightPtr = max_element(histrogramReverse.begin(), histrogramReverse.begin()+190);
+                    RightLanePos = 400 - distance(histrogramReverse.begin(), RightPtr);
+                    
+                    line(frameFinal, Point2f(LeftLanePos, 0), Point2f(LeftLanePos, 240), Scalar(0, 255,0), 2);
+                    line(frameFinal, Point2f(RightLanePos, 0), Point2f(RightLanePos, 240), Scalar(0,255,0), 2); 
     
-    vector<int>::iterator RightPtr;
-    RightPtr = max_element(histrogramLane.begin() +250,histrogramLane.begin() + 150);
-    RightLanePos=distance(histrogramLane.begin(), RightPtr);
-    
-    line(frameFinal, Point2f(LeftLanePos, 0), Point2f(LeftLanePos,240), Scalar(0,255,0,2));
-    line(frameFinal, Point2f(RightLanePos, 0), Point2f(RightLanePos,240), Scalar(0,255,0,2));
-    
-    
+    // lane center
+
+     laneCenter = (RightLanePos-LeftLanePos)/2 +LeftLanePos;
+                    frameCenter = 188;
+                    
+                    line(frameFinal, Point2f(laneCenter,0), Point2f(laneCenter,240), Scalar(0,255,0), 3);
+                    line(frameFinal, Point2f(frameCenter,0), Point2f(frameCenter,240), Scalar(255,0,0), 3);
+                
+                    Result = laneCenter-frameCenter;
     
     
     
@@ -101,7 +116,7 @@ void LaneFinder()
     
     
 
-*/
+
 int main(int argc,char **argv)
 {
 	
