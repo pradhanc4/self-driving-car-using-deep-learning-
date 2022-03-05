@@ -8,9 +8,9 @@ using namespace std;
 using namespace cv;
 using namespace raspicam;
 
-Mat frame,Matrix,framePers,frameGray, frameThresh, frameEdge ,frameFinal,laneCenter;
+Mat frame,Matrix,framePers,frameGray, frameThresh, frameEdge ,frameFinal, frameFinalCvt;
 Mat ROILane;
-int LeftLanePos,RightLanePos,Result,frameCenter,laneCenter;
+int LeftLanePos,RightLanePos, frameCenter, Result,LaneCenter;
 
 
 RaspiCam_Cv Camera;
@@ -21,8 +21,8 @@ stringstream ss;
 vector<int> histrogramLane;
 vector<int> histrogramReverse;
 
-Point2f Source[] = {Point2f(35,135), Point2f(295,130), Point2f(0,180), Point2f(340,180)};
-Point2f Destination[] = {Point2f(80,0), Point2f(280,0), Point2f(80,240), Point2f(280,240)};
+Point2f Source[] = {Point2f(50,155), Point2f(325,155), Point2f(30,200), Point2f(334,200)};
+Point2f Destination[] = {Point2f(100,0), Point2f(280,0), Point2f(100,240), Point2f(280,240)};
 
 
  void Setup ( int argc,char **argv, RaspiCam_Cv &Camera )
@@ -46,7 +46,7 @@ void Perspective()
     
 
     Matrix = getPerspectiveTransform(Source, Destination);
-    warpPerspective(frame, framePers, Matrix, Size(350,240));
+    warpPerspective(frame, framePers, Matrix, Size(400,240));
 
 
 
@@ -61,9 +61,12 @@ void capture()
 
 void Threshold()
 {
+    
+    
+    
     cvtColor(framePers, frameGray, COLOR_RGB2GRAY);
-    inRange(frameGray,110,250,frameThresh);
-    Canny(frameGray, frameEdge, 100,350,3,false);
+    inRange(frameGray,160,255,frameThresh);
+    Canny(frameGray, frameEdge, 600,800,3,false);
     add(frameThresh, frameEdge, frameFinal);
     cvtColor(frameFinal, frameFinal, COLOR_GRAY2RGB);
 
@@ -71,21 +74,23 @@ void Threshold()
 
 void Histrogram()
 {
+    cout << "frame";
     histrogramLane.resize(400);
     histrogramLane.clear();
     
     //for(int i=0i<frame.size().width;i++)
     for(int i=0; i<400; i++)
     {
-            ROILane = frameFinal(Rect(i,140,1,240));
+            ROILane = frameFinal(Rect(i,140,1,100));
             divide(255,ROILane, ROILane);
-            histrogramLane.push_back((int)(sum(ROILane)[0]));
+           histrogramLane.push_back((int)(sum(ROILane)[0]));
     }
 }
 
 void LaneFinder()
 {
-                    vector<int>:: iterator LeftPtr;
+    
+    vector<int>:: iterator LeftPtr;
                     LeftPtr = max_element(histrogramLane.begin(), histrogramLane.begin()+190);
                     LeftLanePos = distance(histrogramLane.begin(), LeftPtr); 
                     
@@ -103,23 +108,18 @@ void LaneFinder()
                     line(frameFinal, Point2f(LeftLanePos, 0), Point2f(LeftLanePos, 240), Scalar(0, 255,0), 2);
                     line(frameFinal, Point2f(RightLanePos, 0), Point2f(RightLanePos, 240), Scalar(0,255,0), 2); 
     
-    // lane center
-
-     laneCenter = (RightLanePos-LeftLanePos)/2 +LeftLanePos;
-                    frameCenter = 188;
+    
+    
+                        // lane center ininitialize ;
+                    LaneCenter = (RightLanePos-LeftLanePos)/2 +LeftLanePos;
+                    frameCenter = 189;
                     
-                    line(frameFinal, Point2f(laneCenter,0), Point2f(laneCenter,240), Scalar(0,255,0), 3);
+                    line(frameFinal, Point2f(LaneCenter,0), Point2f(LaneCenter,240), Scalar(0,255,0), 3);
                     line(frameFinal, Point2f(frameCenter,0), Point2f(frameCenter,240), Scalar(255,0,0), 3);
                 
-                    Result = laneCenter-frameCenter;
-    
-    
-    
-}
-    
-    
-    
-
+                    Result = LaneCenter-frameCenter;
+                }    
+   
 
 int main(int argc,char **argv)
 {
@@ -146,14 +146,17 @@ int main(int argc,char **argv)
     Perspective();
     Threshold();
     Histrogram();
-    //LaneFinder();
-
-ss.str("");
-ss.clear();
-ss<<"Result="<<Result;
-putText(frame, ss.str(), Point2f(1,50), 0,1, Scalar(0,255,0),2);
+    LaneFinder();
+   // LaneCenter();
     
-    Camera.cpp
+    
+    ss.str(" ");
+    ss.clear();
+    ss<<"Result ="<<Result;
+    putText(frame, ss.str(), Point2f(1,50), 0,1, Scalar(0,255,0), 2);
+    
+    
+    
     namedWindow("ORIGINAL",WINDOW_KEEPRATIO);
     moveWindow("ORIGINAL",0,100);
     resizeWindow("ORIGINAL",480,480);
