@@ -8,6 +8,8 @@ using namespace std;
 using namespace cv;
 using namespace raspicam;
 
+
+//Image processing variables 
 Mat frame,Matrix,framePers,frameGray, frameThresh, frameEdge ,frameFinal, frameFinalCvt;
 Mat ROILane;
 int LeftLanePos,RightLanePos, frameCenter, Result,LaneCenter;
@@ -24,6 +26,10 @@ vector<int> histrogramReverse;
 Point2f Source[] = {Point2f(50,155), Point2f(325,155), Point2f(30,200), Point2f(334,200)};
 Point2f Destination[] = {Point2f(100,0), Point2f(280,0), Point2f(100,240), Point2f(280,240)};
 
+// Machine Learning Variables 
+CascadeClassifier Stop_Cascade;
+Mat frame_Stop;
+vector<Rect> Stop;
 
  void Setup ( int argc,char **argv, RaspiCam_Cv &Camera )
   {
@@ -109,8 +115,10 @@ void LaneFinder()
                     line(frameFinal, Point2f(RightLanePos, 0), Point2f(RightLanePos, 240), Scalar(0,255,0), 2); 
     
     
-    
-                        // lane center ininitialize ;
+}
+    void laneCenter()
+    {
+                        
                     LaneCenter = (RightLanePos-LeftLanePos)/2 +LeftLanePos;
                     frameCenter = 189;
                     
@@ -119,7 +127,15 @@ void LaneFinder()
                 
                     Result = LaneCenter-frameCenter;
                 }    
-   
+                
+                
+    void Stop_detection()
+                {
+                    if(!Stop_Cascade.load("//home/pi/Desktop/Machine_Learning//Stop_cascade.xml"))
+                    {
+                  printf("Unable to open stop cascade file");
+                    }
+                }
 
 int main(int argc,char **argv)
 {
@@ -147,7 +163,8 @@ int main(int argc,char **argv)
     Threshold();
     Histrogram();
     LaneFinder();
-   // LaneCenter();
+   laneCenter();
+   Stop_detection();
     
     
     ss.str(" ");
